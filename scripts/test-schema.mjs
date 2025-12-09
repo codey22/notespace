@@ -11,13 +11,6 @@ dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 async function testSchema() {
     console.log('Testing Note Schema (Validation Only)...');
-    console.log('Note model type:', typeof Note);
-    if (typeof Note !== 'function') {
-        console.error('Note is not a constructor/function. Value:', Note);
-    }
-
-    // We don't strictly need a DB connection to test Mongoose validations
-    // validations are run pre-save or explicitly via .validate()
 
     try {
         // Test 1: Valid Note
@@ -30,9 +23,9 @@ async function testSchema() {
                 tags: ['test', 'schema']
             });
             await validNote.validate();
-            console.log('✅ Valid note validation passed');
+            console.log('PASSED: Valid note validation passed');
         } catch (err) {
-            console.error('❌ Valid note validation failed:', err.message);
+            console.error('FAILED: Valid note validation failed:', err.message);
         }
 
         // Test 2: Invalid Note (Missing userId)
@@ -43,12 +36,12 @@ async function testSchema() {
                 content: 'Content'
             });
             await invalidNote.validate();
-            console.error('❌ Missing userId validation failed (Should have thrown error)');
+            console.error('FAILED: Missing userId validation failed (Should have thrown error)');
         } catch (err) {
             if (err.errors && err.errors.userId) {
-                console.log('✅ Detected missing userId as expected');
+                console.log('PASSED: Detected missing userId as expected');
             } else {
-                console.error('❌ Unexpected error:', err.message);
+                console.error('FAILED: Unexpected error:', err.stack);
             }
         }
 
@@ -59,12 +52,12 @@ async function testSchema() {
                 userId: 'test-user-123'
             });
             await emptyNote.validate();
-            console.error('❌ Empty content validation failed (Should have thrown error)');
+            console.error('FAILED: Empty content validation failed (Should have thrown error)');
         } catch (err) {
             if (err.message.includes('Either title or content')) {
-                console.log('✅ Detected empty note as expected');
+                console.log('PASSED: Detected empty note as expected');
             } else {
-                console.error('❌ Unexpected error:', err.message);
+                console.error('FAILED: Unexpected error:', err.stack);
             }
         }
 
@@ -77,21 +70,57 @@ async function testSchema() {
                 userId: 'test-user-123'
             });
             await longTitleNote.validate();
-            console.error('❌ Long title validation failed (Should have thrown error)');
+            console.error('FAILED: Long title validation failed (Should have thrown error)');
         } catch (err) {
             if (err.errors && err.errors.title) {
-                console.log('✅ Detected long title as expected');
+                console.log('PASSED: Detected long title as expected');
             } else {
-                console.error('❌ Unexpected error:', err.message);
+                console.error('FAILED: Unexpected error:', err.stack);
             }
         }
 
-        console.log('\nDone testing schema validations.');
-        process.exit(0);
+        // Test 5: Invalid Note (Too long content)
+        console.log('\nTest 5: Validation check - Content too long...');
+        try {
+            const longContentNote = new Note({
+                title: 'Valid Title',
+                content: 'a'.repeat(20001),
+                userId: 'test-user-123'
+            });
+            await longContentNote.validate();
+            console.error('FAILED: Long content validation failed (Should have thrown error)');
+        } catch (err) {
+            if (err.errors && err.errors.content) {
+                console.log('PASSED: Detected long content as expected');
+            } else {
+                console.error('FAILED: Unexpected error:', err.stack);
+            }
+        }
+
+        // Test 6: Invalid Note (Tag too long)
+        console.log('\nTest 6: Validation check - Tag too long...');
+        try {
+            const longTagNote = new Note({
+                title: 'Valid Title',
+                content: 'Content',
+                userId: 'test-user-123',
+                tags: ['a'.repeat(51)]
+            });
+            await longTagNote.validate();
+            console.error('FAILED: Long tag validation failed (Should have thrown error)');
+        } catch (err) {
+            // Accessing the specific error for the tags field
+            if (err.errors && err.errors.tags) {
+                console.log('PASSED: Detected long tag as expected');
+            } else {
+                console.error('FAILED: Unexpected error:', err.stack);
+            }
+        }
+
+        console.log('\nSchema Tests Completed.');
 
     } catch (error) {
-        console.error('Test script error:', error);
-        process.exit(1);
+        console.error('Critical Error:', error);
     }
 }
 

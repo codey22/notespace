@@ -10,16 +10,25 @@ const NoteSchema = new mongoose.Schema(
         content: {
             type: String,
             trim: true,
+            maxlength: [20000, 'Content cannot be more than 20000 characters'],
         },
         tags: {
             type: [String],
             index: true,
-            validate: {
-                validator: function (v) {
-                    return v.length <= 10;
+            validate: [
+                {
+                    validator: function (v) {
+                        return v.length <= 10;
+                    },
+                    message: 'A note cannot have more than 10 tags',
                 },
-                message: 'A note cannot have more than 10 tags',
-            },
+                {
+                    validator: function (v) {
+                        return v.every((tag) => tag.length <= 50);
+                    },
+                    message: 'Tags cannot be more than 50 characters',
+                },
+            ],
         },
         isPinned: {
             type: Boolean,
@@ -30,7 +39,7 @@ const NoteSchema = new mongoose.Schema(
             default: false,
         },
         userId: {
-            type: String, // Assuming string ID for now (e.g. from Auth provider)
+            type: String,
             required: [true, 'User ID is required'],
             index: true,
         },
@@ -45,12 +54,11 @@ const NoteSchema = new mongoose.Schema(
 );
 
 // Custom validation: Either title or content must be provided
-NoteSchema.pre('validate', function (next) {
+NoteSchema.pre('validate', function () {
     if (!this.title && !this.content) {
         this.invalidate('title', 'Either title or content must be provided');
         this.invalidate('content', 'Either title or content must be provided');
     }
-    next();
 });
 
 // Indexes
