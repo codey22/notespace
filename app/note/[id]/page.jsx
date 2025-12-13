@@ -17,6 +17,7 @@ export default function NotePage({ params }) {
     const [isDisabled, setIsDisabled] = useState(false);
     const [updatedAt, setUpdatedAt] = useState(null);
     const isRenaming = useRef(false);
+    const [isPasswordProtected, setIsPasswordProtected] = useState(false);
 
     useEffect(() => {
         // Unwrap params
@@ -75,6 +76,7 @@ export default function NotePage({ params }) {
                     setCurrentTitle(data.data.title || "");
                     setCurrentContent(data.data.content || "");
                     setUpdatedAt(data.data.updatedAt);
+                    setIsPasswordProtected(!!data.data.passwordHash);
                 }
             } catch (error) {
                 console.error("Failed to fetch note:", error);
@@ -85,6 +87,19 @@ export default function NotePage({ params }) {
 
         fetchNote();
     }, [noteId]);
+
+    useEffect(() => {
+        if (!noteId) return;
+        if (!isPasswordProtected) return;
+        try {
+            const unlocked = localStorage.getItem(`note_unlocked_${noteId}`);
+            if (!unlocked) {
+                router.replace(`/note/login/${noteId}`);
+            }
+        } catch {
+            router.replace(`/note/login/${noteId}`);
+        }
+    }, [noteId, isPasswordProtected, router]);
 
     // Check for expiry every minute
     useEffect(() => {
@@ -162,6 +177,8 @@ export default function NotePage({ params }) {
                 noteId={noteId}
                 customUrl={customUrl}
                 onUrlChange={handleUrlChange}
+                isPasswordProtected={isPasswordProtected}
+                onPasswordChange={setIsPasswordProtected}
             />
             <NoteEditor
                 noteId={noteId}
