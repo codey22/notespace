@@ -25,12 +25,8 @@ export default function PasswordModal({ isOpen, onClose, onAdd }) {
         };
     }, [isOpen, onClose]);
 
-    // Reset state when closed
     useEffect(() => {
-        if (!isOpen) {
-            setPassword("");
-            setShowPassword(false);
-        }
+        if (!isOpen) return;
     }, [isOpen]);
 
     return (
@@ -69,6 +65,7 @@ export default function PasswordModal({ isOpen, onClose, onAdd }) {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="Enter password"
+                                    maxLength={8}
                                     className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent transition-all text-fg pr-12 text-sm"
                                     autoFocus
                                 />

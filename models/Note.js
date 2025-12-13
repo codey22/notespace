@@ -75,6 +75,12 @@ const NoteSchema = new mongoose.Schema(
             trim: true,
             maxlength: [50, 'Logo text cannot be more than 50 characters'],
         },
+        passwordHash: {
+            type: String,
+            minlength: [1, 'Password hash is required when set'],
+            maxlength: [200, 'Password hash is too long'],
+            select: true,
+        },
     },
     {
         timestamps: true,

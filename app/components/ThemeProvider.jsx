@@ -3,20 +3,16 @@
 import { useEffect, useState } from "react";
 
 export function ThemeProvider({ children }) {
-    const [theme, setTheme] = useState("light");
-
-    // Load theme from localStorage on mount
-    useEffect(() => {
-        const storedTheme = localStorage.getItem("theme");
-        if (storedTheme) {
-            setTheme(storedTheme);
-        } else {
-            // Default to system preference or light
-            if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-                setTheme("dark");
+    const [theme, setTheme] = useState(() => {
+        try {
+            const stored = typeof window !== 'undefined' ? localStorage.getItem("theme") : null;
+            if (stored) return stored;
+            if (typeof window !== 'undefined' && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                return "dark";
             }
-        }
-    }, []);
+        } catch {}
+        return "light";
+    });
 
     // Update HTML class and localStorage when theme changes
     useEffect(() => {
@@ -36,10 +32,6 @@ export function ThemeProvider({ children }) {
     };
 
     return (
-        // We can expose the context if needed, but for now we might just need a toggle function passed down or available globally.
-        // However, specifically for the toggle button in the navbar, we probably want a context.
-        // Let's create a minimal context or just rely on passing props if we want to be simple? 
-        // Actually, a global context is better to avoid prop drilling.
         <ThemeContext.Provider value={{ theme, toggleTheme }}>
             {children}
         </ThemeContext.Provider>
