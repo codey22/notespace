@@ -31,11 +31,15 @@ const Tooltip = ({ content, children }) => (
     </div>
 );
 
-export default function ShareModal({ isOpen, onClose, shareUrl }) {
+export default function ShareModal({ isOpen, onClose, shareUrl = "" }) {
     const modalRef = useRef(null);
 
     const encodedUrl = encodeURIComponent(shareUrl);
-    const encodedText = encodeURIComponent("Check out this note");
+    const encodedText = encodeURIComponent("Check out this note on NoteSpace!");
+
+    const openShare = (url) => {
+        window.open(url, "_blank", "noopener,noreferrer");
+    };
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -103,6 +107,12 @@ export default function ShareModal({ isOpen, onClose, shareUrl }) {
                     `mailto:?subject=Shared Note&body=${encodedText}%0A${encodedUrl}`
                 ),
         },
+        {
+            name: "Instagram",
+            icon: FaInstagram,
+            color: "bg-pink-100 text-pink-600",
+            action: () => openShare("https://www.instagram.com/"),
+        },
     ];
 
     return (
@@ -148,15 +158,19 @@ export default function ShareModal({ isOpen, onClose, shareUrl }) {
                             </div>
 
                             <div className="w-full p-2 bg-gray-50 dark:bg-gray-800 rounded-lg flex items-center justify-between border">
-                                <span className="text-xs text-gray-500 truncate px-2">
-                                    {shareUrl}
-                                </span>
+                                <input
+                                    type="text"
+                                    readOnly
+                                    value={shareUrl}
+                                    onClick={(e) => e.target.select()}
+                                    className="w-full bg-transparent border-none text-xs text-gray-500 focus:ring-0 px-2 outline-none"
+                                />
                                 <Tooltip content="Copy">
                                     <motion.button
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
                                         onClick={() => navigator.clipboard.writeText(shareUrl)}
-                                        className="p-2 rounded-full"
+                                        className="p-2 text-accent hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-full transition-colors"
                                     >
                                         <Copy size={16} />
                                     </motion.button>
