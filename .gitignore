@@ -36,3 +36,15 @@ yarn-error.log*
 # vercel
 .vercel
 
+# Local debugging logs
+build_log.txt
+lint_log.txt
+components_lint.txt
+
+# Local env files
+.env*.local
+
+# Editor directories
+.vscode/
+.idea/
+

@@ -14,6 +14,7 @@ const nextConfig = {
     return config;
   },
   devIndicators: false,
+  turbopack: {},
 };
 
 export default nextConfig;

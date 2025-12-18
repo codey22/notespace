@@ -14,7 +14,7 @@ export default function ChangeUrlModal({ isOpen, onClose, noteId, currentCustomU
 
     // Initialize with current customUrl
     useEffect(() => {
-        if (isOpen && currentCustomUrl) {
+        if (isOpen && currentCustomUrl && url !== currentCustomUrl) {
             setUrl(currentCustomUrl);
         }
     }, [isOpen, currentCustomUrl]);
@@ -133,7 +133,7 @@ export default function ChangeUrlModal({ isOpen, onClose, noteId, currentCustomU
                             <div className="w-full">
                                 <h3 className="text-xl font-bold text-fg mb-2">Change URL</h3>
                                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                                    Customize your note's URL
+                                    Customize your note&apos;s URL
                                 </p>
                             </div>
 
