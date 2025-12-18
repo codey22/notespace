@@ -57,6 +57,10 @@ export default function ShareModal({ isOpen, onClose, shareUrl = "" }) {
         };
     }, [isOpen, onClose]);
 
+    const openShare = (url) => {
+        window.open(url, "_blank", "noopener,noreferrer");
+    };
+
     const shareOptions = [
         {
             name: "Copy Link",
@@ -120,7 +124,6 @@ export default function ShareModal({ isOpen, onClose, shareUrl = "" }) {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         className="fixed inset-0 bg-black/20 backdrop-blur-sm pointer-events-auto"
-                        aria-hidden="true"
                         onClick={onClose}
                     />
 
@@ -133,9 +136,7 @@ export default function ShareModal({ isOpen, onClose, shareUrl = "" }) {
                         ref={modalRef}
                     >
                         <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 flex flex-col gap-6">
-                            <div className="w-full flex justify-between items-center">
-                                <h3 className="text-xl font-bold text-fg">Share this note</h3>
-                            </div>
+                            <h3 className="text-xl font-bold">Share this note</h3>
 
                             <div className="grid grid-cols-3 gap-4">
                                 {shareOptions.map((option) => (
@@ -144,7 +145,7 @@ export default function ShareModal({ isOpen, onClose, shareUrl = "" }) {
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
                                         onClick={option.action}
-                                        className="flex flex-col items-center gap-2 p-2 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                                        className="flex flex-col items-center gap-2 p-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800/50"
                                     >
                                         <div className={`p-4 rounded-full ${option.color}`}>
                                             <option.icon size={24} />
