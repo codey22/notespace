@@ -30,9 +30,15 @@ export default function Home() {
 
                 if (data.success) {
                     router.push(`/note/${data.data.customUrl}`);
+                } else {
+                    throw new Error(data.error || 'Server returned unsuccessful response');
                 }
             } catch (error) {
                 console.error('Error creating note:', error);
+
+                // Show error to user so they aren't stuck on "Initializing..."
+                alert(`Failed to initialize NoteSpace: ${error.message || 'Unknown error'}. Please refresh or check your connection.`);
+
                 // Allow retrying if creation failed
                 isCreating.current = false;
             }
