@@ -1,5 +1,3 @@
-"use server";
-
 import dbConnect from '@/lib/db';
 import Note from '@/models/Note';
 import { NextResponse } from 'next/server';
